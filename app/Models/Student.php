@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Student extends Model
+{
+    use HasFactory;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function guardians()
+    {
+        return $this->belongsToMany(Guardian::class, 'guardian_student');
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(AcademicEnrollment::class);
+    }
+
+    public function attendanceLedgers()
+    {
+        return $this->hasMany(AttendanceLedger::class);
+    }
+}
