@@ -9,6 +9,13 @@ class Program extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'program_code',
+        'program_name',
+        'governing_body',
+        'status',
+    ];
+
     public function academicCycles()
     {
         return $this->hasMany(AcademicCycle::class);
