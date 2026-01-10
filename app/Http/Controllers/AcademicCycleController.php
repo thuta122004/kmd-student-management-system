@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AcademicCycle;
 use App\Models\Program;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AcademicCycleController extends Controller
 {
@@ -53,12 +54,37 @@ class AcademicCycleController extends Controller
         $validated = $request->validate([
             'program_id'    => 'required|exists:programs,id',
             'exam_cycle'    => 'required|in:Autumn,Winter,Spring,Summer',
-            'academic_year' => 'required|string|max:20',
-            'cycle_start'   => 'required|date',
-            'cycle_end'     => 'required|date|after:cycle_start',
-            'cycle_status'  => 'required|in:planned,running,closed',
-            'is_locked'     => 'nullable|boolean',
+            'academic_year' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('academic_cycles')
+                    ->where(fn($q) => $q
+                        ->where('program_id', $request->program_id)
+                        ->where('exam_cycle', $request->exam_cycle)
+                    ),
+            ],
+            'cycle_start'  => 'required|date',
+            'cycle_end'    => 'required|date|after:cycle_start',
+            'cycle_status' => 'required|in:planned,running,closed',
+            'is_locked'    => 'nullable|boolean',
+        ], [
+            'academic_year.unique' => 'An academic cycle for this program and exam cycle already exists.',
         ]);
+
+        // Overlap detection
+        $overlap = AcademicCycle::where('program_id', $request->program_id)
+            ->where(function($q) use ($request) {
+                $q->where('cycle_start', '<=', $request->cycle_end)
+                ->where('cycle_end', '>=', $request->cycle_start);
+            })
+            ->exists();
+
+        if ($overlap) {
+            return back()->withInput()->withErrors([
+                'cycle_start' => 'This cycle overlaps with an existing cycle for the same program.'
+            ]);
+        }
 
         AcademicCycle::create($validated);
 
@@ -101,12 +127,39 @@ class AcademicCycleController extends Controller
         $validated = $request->validate([
             'program_id'    => 'required|exists:programs,id',
             'exam_cycle'    => 'required|in:Autumn,Winter,Spring,Summer',
-            'academic_year' => 'required|string|max:20',
-            'cycle_start'   => 'required|date',
-            'cycle_end'     => 'required|date|after:cycle_start',
-            'cycle_status'  => 'required|in:planned,running,closed',
-            'is_locked'     => 'nullable|boolean',
+            'academic_year' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('academic_cycles')
+                    ->ignore($academicCycle->id)
+                    ->where(fn($q) => $q
+                        ->where('program_id', $request->program_id)
+                        ->where('exam_cycle', $request->exam_cycle)
+                    ),
+            ],
+            'cycle_start'  => 'required|date',
+            'cycle_end'    => 'required|date|after:cycle_start',
+            'cycle_status' => 'required|in:planned,running,closed',
+            'is_locked'    => 'nullable|boolean',
+        ], [
+            'academic_year.unique' => 'An academic cycle for this program and exam cycle already exists.',
         ]);
+
+        // Overlap detection excluding current cycle
+        $overlap = AcademicCycle::where('program_id', $request->program_id)
+            ->where('id', '<>', $academicCycle->id)
+            ->where(function($q) use ($request) {
+                $q->where('cycle_start', '<=', $request->cycle_end)
+                ->where('cycle_end', '>=', $request->cycle_start);
+            })
+            ->exists();
+
+        if ($overlap) {
+            return back()->withInput()->withErrors([
+                'cycle_start' => 'This cycle overlaps with an existing cycle for the same program.'
+            ]);
+        }
 
         $academicCycle->update($validated);
 
