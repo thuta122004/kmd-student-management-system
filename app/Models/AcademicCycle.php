@@ -9,6 +9,22 @@ class AcademicCycle extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'program_id',
+        'exam_cycle',
+        'academic_year',
+        'cycle_start',
+        'cycle_end',
+        'cycle_status',
+        'is_locked',
+    ];
+
+    protected $casts = [
+        'cycle_start' => 'date',
+        'cycle_end'   => 'date',
+        'is_locked'   => 'boolean',
+    ];
+
     public function program()
     {
         return $this->belongsTo(Program::class);

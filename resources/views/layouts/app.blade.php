@@ -95,6 +95,15 @@
                                         Programs
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('/academic-cycles') }}"
+                                    class="nav-link px-3 py-2
+                                    {{ request()->is('academic-cycles*')
+                                            ? 'bg-light border-start border-4 border-primary fw-semibold text-primary'
+                                            : 'text-dark' }}">
+                                        Academic Cycles
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </nav>

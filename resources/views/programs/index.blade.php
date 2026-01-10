@@ -39,7 +39,6 @@
     Showing {{ $programs->total() }} result(s)
 </div>
 
-
 <table class="table table-bordered">
     <thead>
         <tr>

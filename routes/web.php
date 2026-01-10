@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcademicCycleController;
 use App\Http\Controllers\ProgramController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,4 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::resource('programs', ProgramController::class);
+Route::resource('academic-cycles', AcademicCycleController::class);
