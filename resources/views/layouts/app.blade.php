@@ -104,6 +104,15 @@
                                         Academic Cycles
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{ url('/levels') }}"
+                                    class="nav-link px-3 py-2
+                                    {{ request()->is('levels*')
+                                            ? 'bg-light border-start border-4 border-primary fw-semibold text-primary'
+                                            : 'text-dark' }}">
+                                        Levels
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </nav>

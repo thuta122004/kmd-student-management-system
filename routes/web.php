@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcademicCycleController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\ProgramController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,5 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::resource('programs', ProgramController::class);
 Route::resource('academic-cycles', AcademicCycleController::class);
+Route::resource('levels', LevelController::class);
+

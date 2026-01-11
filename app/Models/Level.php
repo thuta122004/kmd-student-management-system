@@ -9,6 +9,13 @@ class Level extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'program_id',
+        'level_number',
+        'semester_count',
+        'nqf_level',
+    ];
+
     public function program()
     {
         return $this->belongsTo(Program::class);
